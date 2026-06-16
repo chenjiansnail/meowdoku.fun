@@ -89,6 +89,8 @@ h1 { font-size: 2rem; margin: 32px 0 8px; }
   cursor: pointer;
   filter: brightness(0.55);
   transition: filter 0.1s, transform 0.1s;
+  overflow: hidden;
+  position: relative;
 }
 .meow-cell:hover { filter: brightness(0.7); }
 .meow-cell.has-cat, .meow-cell.has-x { filter: brightness(0.85); }

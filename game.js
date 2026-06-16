@@ -11,6 +11,26 @@
   ];
 
   var STATE_EMPTY = 0, STATE_X = 1, STATE_CAT = 2;
+
+  var CAT_SVG = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" style="width:82%;height:82%;display:block;pointer-events:none">'
+    + '<polygon points="13,52 27,10 44,52" fill="white" stroke="#222" stroke-width="2.5" stroke-linejoin="round"/>'
+    + '<polygon points="20,49 27,22 40,49" fill="#ffb8c8"/>'
+    + '<polygon points="56,52 73,10 87,52" fill="white" stroke="#222" stroke-width="2.5" stroke-linejoin="round"/>'
+    + '<polygon points="60,49 73,22 80,49" fill="#ffb8c8"/>'
+    + '<ellipse cx="50" cy="64" rx="36" ry="33" fill="white" stroke="#222" stroke-width="2.5"/>'
+    + '<ellipse cx="37" cy="58" rx="7.5" ry="8.5" fill="#111"/>'
+    + '<ellipse cx="63" cy="58" rx="7.5" ry="8.5" fill="#111"/>'
+    + '<circle cx="40" cy="55" r="2.8" fill="white"/>'
+    + '<circle cx="66" cy="55" r="2.8" fill="white"/>'
+    + '<circle cx="41.5" cy="56.5" r="1.1" fill="white"/>'
+    + '<circle cx="67.5" cy="56.5" r="1.1" fill="white"/>'
+    + '<path d="M47,69 L50,65.5 L53,69 Z" fill="#ff9eb5" stroke="#e07090" stroke-width="0.8"/>'
+    + '<path d="M46,70 Q50,75.5 54,70" stroke="#444" stroke-width="2" fill="none" stroke-linecap="round"/>'
+    + '<line x1="6" y1="63" x2="43" y2="67" stroke="#ccc" stroke-width="1.4" stroke-linecap="round"/>'
+    + '<line x1="6" y1="69.5" x2="43" y2="69.5" stroke="#ccc" stroke-width="1.4" stroke-linecap="round"/>'
+    + '<line x1="57" y1="67" x2="94" y2="63" stroke="#ccc" stroke-width="1.4" stroke-linecap="round"/>'
+    + '<line x1="57" y1="69.5" x2="94" y2="69.5" stroke="#ccc" stroke-width="1.4" stroke-linecap="round"/>'
+    + '</svg>';
   var MAX_HEARTS = 3;
 
   var els = {};
@@ -176,15 +196,16 @@
 
   function renderCellContent(cell, state) {
     if (state === STATE_CAT) {
-      cell.textContent = "🐱";
+      cell.innerHTML = CAT_SVG;
       cell.classList.add("has-cat");
       cell.classList.remove("has-x");
     } else if (state === STATE_X) {
+      cell.innerHTML = "";
       cell.textContent = "✕";
       cell.classList.add("has-x");
       cell.classList.remove("has-cat");
     } else {
-      cell.textContent = "";
+      cell.innerHTML = "";
       cell.classList.remove("has-cat", "has-x");
     }
   }
