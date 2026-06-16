@@ -4,21 +4,21 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Meowdoku - Play Free Online | meowdoku.fun</title>
-<meta name="description" content="Play meowdoku online for free, no download required. Instant play in your browser on desktop or mobile.">
+<meta name="description" content="Play meowdoku online free in your browser — no download, no signup. Instant play on desktop and mobile, with tips, FAQs, and everything you need to get started.">
 <link rel="canonical" href="https://meowdoku.fun/">
 
 <!-- Open Graph -->
 <meta property="og:type" content="website">
 <meta property="og:title" content="Meowdoku - Play Free Online">
-<meta property="og:description" content="Play meowdoku online for free, no download required.">
+<meta property="og:description" content="Play meowdoku online free in your browser — no download, no signup. Instant play on desktop and mobile, with tips, FAQs, and everything you need to get started.">
 <meta property="og:url" content="https://meowdoku.fun/">
 
 <!-- Twitter -->
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="Meowdoku - Play Free Online">
-<meta name="twitter:description" content="Play meowdoku online for free, no download required.">
+<meta name="twitter:description" content="Play meowdoku online free in your browser — no download, no signup. Instant play on desktop and mobile, with tips, FAQs, and everything you need to get started.">
 
-<!-- JSON-LD: VideoGame + FAQPage -->
+<!-- JSON-LD: VideoGame + FAQPage + BreadcrumbList -->
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
@@ -41,19 +41,49 @@
   "mainEntity": [
     {
       "@type": "Question",
-      "name": "Is meowdoku free to play?",
-      "acceptedAnswer": { "@type": "Answer", "text": "Yes, meowdoku is completely free to play in your browser with no download or signup required." }
+      "name": "Is Meowdoku free to play?",
+      "acceptedAnswer": { "@type": "Answer", "text": "Yes, Meowdoku is completely free to play in your browser. There's no download, no signup, and no hidden fees." }
     },
     {
       "@type": "Question",
-      "name": "Can I play meowdoku on mobile?",
-      "acceptedAnswer": { "@type": "Answer", "text": "Yes, meowdoku works on desktop, tablet, and mobile browsers." }
+      "name": "What are the rules of Meowdoku?",
+      "acceptedAnswer": { "@type": "Answer", "text": "Place exactly one cat per row, per column, and per colored region, with no two cats touching — including diagonally. Every puzzle has exactly one valid solution." }
     },
     {
       "@type": "Question",
-      "name": "Do I need to install anything to play meowdoku?",
-      "acceptedAnswer": { "@type": "Answer", "text": "No installation needed. The game runs instantly in your browser." }
+      "name": "Is Meowdoku the same as the \"Queens\" puzzle?",
+      "acceptedAnswer": { "@type": "Answer", "text": "Meowdoku uses the same core rule set as the popular Queens-style grid logic puzzle, with a cat theme and its own puzzle bank." }
+    },
+    {
+      "@type": "Question",
+      "name": "Can I play Meowdoku on mobile?",
+      "acceptedAnswer": { "@type": "Answer", "text": "Yes — the board and controls work with touch taps as well as mouse clicks, on phones and tablets." }
+    },
+    {
+      "@type": "Question",
+      "name": "What happens if I make a mistake?",
+      "acceptedAnswer": { "@type": "Answer", "text": "Placing a cat that conflicts with another cat costs one of your three hearts and the cell is cleared. Lose all three hearts and you'll need to hit Restart." }
+    },
+    {
+      "@type": "Question",
+      "name": "Does Meowdoku save my progress?",
+      "acceptedAnswer": { "@type": "Answer", "text": "Each puzzle tracks your hearts and timer for the current session. Starting a new puzzle or refreshing the page begins a fresh board." }
+    },
+    {
+      "@type": "Question",
+      "name": "How hard are the puzzles?",
+      "acceptedAnswer": { "@type": "Answer", "text": "Boards range from a beginner-friendly 5x5 up to an expert 9x9. Every single one is checked ahead of time to have exactly one solution, so there's always a logical path through." }
     }
+  ]
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://meowdoku.fun/" },
+    { "@type": "ListItem", "position": 2, "name": "Meowdoku", "item": "https://meowdoku.fun/" }
   ]
 }
 </script>
@@ -73,40 +103,101 @@
   <p class="lead">Jump straight into meowdoku &mdash; no downloads, no signups, just instant browser-based fun on desktop or mobile.</p>
 
   <section class="game-frame" id="game">
-    <!-- TODO: replace this placeholder with the real game embed (iframe / SDK code) -->
-    <div class="game-placeholder">
-      <p>🎮 Game embed goes here</p>
-      <p class="placeholder-note">Replace this block with your game's iframe or embed code.</p>
+    <div class="meow-toolbar">
+      <label class="meow-field">
+        Size
+        <select id="meowdoku-difficulty">
+          <option value="5">5x5 (Easy)</option>
+          <option value="6">6x6</option>
+          <option value="7">7x7</option>
+          <option value="8">8x8</option>
+          <option value="9">9x9 (Expert)</option>
+        </select>
+      </label>
+      <div class="meow-stat">Hearts: <span id="meowdoku-hearts">♥♥♥</span></div>
+      <div class="meow-stat">Time: <span id="meowdoku-timer">0:00</span></div>
+      <div class="meow-buttons">
+        <button type="button" id="meowdoku-new">New Puzzle</button>
+        <button type="button" id="meowdoku-restart">Restart</button>
+        <button type="button" id="meowdoku-hint">Hint</button>
+      </div>
     </div>
+    <div id="meowdoku-board" class="meow-board" role="grid" aria-label="Meowdoku puzzle board"></div>
+    <p id="meowdoku-message" class="meow-message" aria-live="polite"></p>
+    <p class="meow-rules">Place one 🐱 per row, per column, and per colored region. No two cats may touch &mdash; not even diagonally. Click a cell once to mark ✕, again to place 🐱, again to clear.</p>
+    <script type="application/json" id="meowdoku-puzzle-data">[{"size":5,"regions":[[0,0,0,1,1],[3,0,0,0,1],[3,3,2,0,4],[3,2,2,0,4],[2,2,4,4,4]],"solution":[1,4,2,0,3],"id":1},{"size":5,"regions":[[0,0,0,2,2],[0,1,1,1,2],[0,1,1,2,2],[0,3,3,2,2],[0,3,3,4,4]],"solution":[0,2,4,1,3],"id":2},{"size":5,"regions":[[1,0,0,0,0],[1,1,1,0,0],[1,3,2,2,2],[3,3,3,4,2],[3,3,3,4,2]],"solution":[2,0,4,1,3],"id":3},{"size":5,"regions":[[0,0,0,0,0],[1,0,0,2,2],[1,3,3,3,2],[3,3,4,4,4],[3,4,4,4,4]],"solution":[2,0,4,1,3],"id":4},{"size":5,"regions":[[0,0,1,1,1],[0,0,0,1,1],[2,2,2,1,4],[3,2,2,4,4],[2,2,4,4,4]],"solution":[1,4,2,0,3],"id":5},{"size":5,"regions":[[1,1,0,0,0],[1,1,1,0,2],[1,1,2,2,2],[1,3,3,2,2],[4,3,3,3,2]],"solution":[3,1,4,2,0],"id":6},{"size":5,"regions":[[0,0,1,1,1],[3,0,0,1,1],[3,0,2,1,1],[3,3,2,1,1],[3,4,4,4,1]],"solution":[1,4,2,0,3],"id":7},{"size":5,"regions":[[1,1,1,1,0],[1,1,1,2,2],[1,3,1,2,2],[3,3,3,2,2],[4,4,4,4,4]],"solution":[4,1,3,0,2],"id":8},{"size":6,"regions":[[0,0,0,0,1,2],[0,0,1,1,1,2],[0,3,3,3,4,2],[3,3,3,4,4,2],[3,3,3,3,4,4],[5,3,3,4,4,4]],"solution":[1,3,5,2,4,0],"id":9},{"size":6,"regions":[[1,0,0,0,0,0],[1,1,1,0,2,2],[3,3,1,0,0,2],[3,3,3,3,2,2],[4,4,4,4,2,4],[5,4,4,4,4,4]],"solution":[4,2,5,1,3,0],"id":10},{"size":6,"regions":[[1,1,0,0,0,0],[1,1,0,2,3,3],[1,1,4,2,3,3],[4,4,4,5,3,3],[4,4,4,5,5,3],[4,4,4,4,5,3]],"solution":[2,0,3,5,1,4],"id":11},{"size":6,"regions":[[2,2,0,0,0,1],[2,0,0,1,1,1],[2,3,1,1,4,4],[2,3,3,4,4,4],[5,5,3,4,4,4],[5,5,3,4,4,4]],"solution":[3,5,0,2,4,1],"id":12},{"size":6,"regions":[[1,1,1,0,0,0],[2,2,1,0,3,3],[2,2,2,0,3,3],[5,5,2,2,3,3],[5,4,4,4,3,3],[5,5,4,4,3,3]],"solution":[4,2,0,5,3,1],"id":13},{"size":6,"regions":[[1,1,1,0,0,0],[1,1,0,0,0,0],[3,3,0,0,2,0],[3,5,0,4,4,4],[3,5,4,4,5,4],[3,5,5,5,5,4]],"solution":[3,1,4,0,5,2],"id":14},{"size":6,"regions":[[1,1,0,0,0,2],[4,1,1,1,2,2],[4,4,3,2,2,2],[4,3,3,2,2,2],[4,4,3,5,2,2],[5,5,5,5,2,2]],"solution":[4,1,5,2,0,3],"id":15},{"size":6,"regions":[[0,0,0,1,1,1],[0,1,1,1,2,2],[0,0,3,3,3,2],[0,0,3,3,2,2],[4,3,3,3,2,5],[4,4,4,5,5,5]],"solution":[1,3,5,2,0,4],"id":16},{"size":7,"regions":[[2,2,2,0,0,0,1],[2,2,2,2,1,0,1],[2,4,2,2,1,1,1],[2,4,2,3,3,3,1],[2,4,4,5,5,3,3],[2,6,4,5,5,3,5],[2,6,4,4,5,5,5]],"solution":[3,6,0,5,2,4,1],"id":17},{"size":7,"regions":[[3,3,3,0,0,1,1],[3,2,2,0,1,1,6],[3,3,2,2,1,6,6],[3,5,5,2,4,6,6],[3,5,5,5,4,6,6],[5,5,5,4,4,4,6],[5,4,4,4,6,6,6]],"solution":[3,5,2,0,4,1,6],"id":18},{"size":7,"regions":[[1,1,0,0,0,0,0],[1,1,1,1,0,2,0],[1,1,1,3,2,2,0],[1,1,3,3,2,5,5],[1,4,3,3,2,2,5],[4,4,5,2,2,2,5],[6,6,5,5,5,5,5]],"solution":[4,2,5,3,1,6,0],"id":19},{"size":7,"regions":[[0,0,0,1,1,1,1],[0,0,1,1,2,2,2],[0,0,1,1,1,1,2],[0,5,5,3,4,4,2],[5,5,5,6,6,4,4],[5,5,5,6,6,4,4],[5,5,5,6,6,6,4]],"solution":[0,2,6,3,5,1,4],"id":20},{"size":7,"regions":[[0,0,3,3,1,2,2],[0,3,3,1,1,2,2],[0,0,3,3,1,4,2],[0,3,3,3,5,4,2],[0,3,5,5,5,4,6],[0,3,5,5,5,5,6],[5,5,5,6,6,6,6]],"solution":[0,3,6,1,5,2,4],"id":21},{"size":7,"regions":[[0,0,3,3,1,2,2],[0,3,3,3,1,2,2],[0,0,3,3,3,2,2],[0,3,3,4,4,2,2],[3,3,3,3,4,4,2],[5,6,6,3,6,4,2],[5,6,6,6,6,4,4]],"solution":[1,4,6,2,5,0,3],"id":22},{"size":7,"regions":[[1,1,0,0,0,0,0],[1,1,1,1,0,0,2],[1,1,1,0,0,0,2],[1,3,4,4,2,2,2],[5,3,4,4,4,6,6],[5,4,4,5,4,4,6],[5,5,5,5,4,6,6]],"solution":[4,2,6,1,3,0,5],"id":23},{"size":7,"regions":[[0,0,0,0,0,0,0],[0,0,2,0,0,0,1],[2,2,2,0,0,1,1],[2,2,4,3,3,1,1],[2,2,4,3,5,1,1],[4,4,4,5,5,5,5],[4,6,6,5,5,5,5]],"solution":[3,6,0,4,2,5,1],"id":24},{"size":8,"regions":[[0,0,0,0,0,0,3,2],[1,1,0,0,0,3,3,2],[1,1,3,3,3,3,2,2],[1,1,1,1,3,3,2,4],[1,3,3,3,3,3,3,4],[1,5,6,3,6,4,4,4],[1,5,6,6,6,4,4,4],[5,5,6,6,6,7,7,7]],"solution":[2,0,6,4,7,1,3,5],"id":25},{"size":8,"regions":[[1,1,1,2,0,0,0,0],[1,1,1,2,0,2,3,0],[1,2,2,2,2,2,3,0],[1,1,1,2,2,2,3,3],[1,1,4,2,4,3,3,3],[5,4,4,4,4,3,3,3],[5,5,4,4,6,3,6,3],[7,7,7,6,6,6,6,6]],"solution":[5,1,3,7,4,0,6,2],"id":26},{"size":8,"regions":[[2,2,2,2,2,0,0,1],[5,5,5,2,2,3,0,1],[5,5,2,2,2,3,0,1],[5,5,6,4,4,3,3,3],[5,5,6,6,4,3,4,3],[5,5,5,6,4,4,4,3],[5,7,6,6,6,4,4,3],[5,7,7,7,7,7,7,7]],"solution":[5,7,2,6,4,0,3,1],"id":27},{"size":8,"regions":[[0,0,0,0,0,0,2,2],[1,0,0,0,0,0,2,2],[0,0,3,0,3,3,2,2],[4,4,3,3,3,3,3,2],[4,4,3,3,3,7,7,6],[4,4,7,7,5,7,7,6],[4,7,7,7,7,7,7,6],[4,4,4,7,7,7,7,7]],"solution":[2,0,6,3,1,4,7,5],"id":28},{"size":8,"regions":[[2,2,0,0,0,0,0,0],[2,2,2,2,2,0,0,1],[2,3,2,3,2,4,0,0],[3,3,3,3,4,4,0,4],[3,3,3,6,4,4,4,4],[3,5,6,6,6,6,6,4],[5,5,5,6,6,4,4,4],[7,7,5,6,6,6,4,4]],"solution":[5,7,4,2,6,1,3,0],"id":29},{"size":8,"regions":[[0,0,0,0,0,0,1,1],[0,0,2,2,1,1,1,1],[0,0,0,2,2,2,1,1],[0,0,0,2,2,2,3,1],[4,4,4,2,2,2,3,7],[4,4,6,5,2,3,3,7],[4,6,6,5,7,3,7,7],[6,6,6,6,7,7,7,7]],"solution":[2,7,4,6,0,3,1,5],"id":30},{"size":8,"regions":[[4,1,1,1,1,1,0,2],[4,4,4,3,1,1,2,2],[4,4,3,3,3,2,2,2],[4,4,3,5,3,5,5,5],[4,4,4,5,5,5,5,5],[4,6,4,7,5,5,5,5],[6,6,6,7,5,5,7,7],[6,7,7,7,7,7,7,7]],"solution":[6,4,7,2,0,5,1,3],"id":31},{"size":8,"regions":[[2,0,0,0,0,0,0,1],[2,2,0,3,0,0,1,1],[2,2,0,3,3,0,3,1],[2,2,2,3,3,3,3,1],[2,2,2,3,3,3,3,4],[7,7,7,7,5,4,4,4],[6,7,7,7,5,4,4,4],[7,7,7,4,4,4,4,4]],"solution":[3,6,1,5,7,4,0,2],"id":32},{"size":9,"regions":[[2,2,2,1,1,1,1,0,0],[3,2,2,1,1,1,1,1,1],[3,2,2,2,6,6,1,1,1],[3,3,2,2,4,6,6,6,1],[3,3,4,4,4,6,6,5,1],[8,8,4,4,6,6,6,5,5],[8,8,4,4,6,4,6,5,6],[7,8,4,4,4,4,6,5,6],[7,8,8,4,4,4,6,6,6]],"solution":[7,5,3,1,4,8,6,0,2],"id":33},{"size":9,"regions":[[2,2,2,2,0,0,1,1,1],[2,2,2,2,2,0,0,3,1],[2,8,2,2,2,0,0,3,1],[8,8,2,2,8,3,3,3,3],[8,8,8,2,8,4,6,3,3],[5,8,8,8,8,4,6,3,6],[5,5,8,8,8,4,6,6,6],[5,8,8,7,7,7,7,6,6],[8,8,8,8,8,7,7,7,7]],"solution":[4,8,2,7,5,0,6,3,1],"id":34},{"size":9,"regions":[[2,2,1,1,1,1,1,0,1],[2,2,1,1,3,3,1,1,1],[2,4,1,3,3,3,3,3,3],[2,4,5,5,3,3,6,3,8],[4,4,5,5,3,6,6,3,8],[4,4,4,5,5,5,6,6,8],[4,7,5,5,6,6,6,8,8],[7,7,7,5,6,6,8,8,8],[7,7,5,5,6,8,8,8,8]],"solution":[7,3,0,5,1,4,6,2,8],"id":35},{"size":9,"regions":[[4,4,1,1,0,0,0,0,2],[4,1,1,1,1,2,2,2,2],[4,1,4,1,1,3,3,2,6],[4,4,4,1,1,3,3,3,6],[4,4,4,1,3,3,6,6,6],[4,4,4,4,5,3,3,3,6],[4,4,4,4,4,8,6,3,6],[4,7,7,7,7,8,6,6,6],[4,4,8,8,8,8,8,6,6]],"solution":[6,2,7,5,0,4,8,1,3],"id":36},{"size":9,"regions":[[1,1,1,1,1,1,2,2,0],[3,3,3,1,1,1,2,2,2],[3,3,3,3,1,1,2,2,2],[6,6,3,3,3,1,4,4,4],[6,6,3,5,5,5,5,4,4],[6,6,6,6,5,5,5,5,4],[6,6,6,6,5,5,7,7,4],[6,6,6,5,5,7,7,7,7],[6,8,8,5,7,7,7,7,7]],"solution":[8,3,6,2,7,4,0,5,1],"id":37},{"size":9,"regions":[[0,0,0,0,0,1,1,1,1],[0,0,2,2,2,1,3,5,5],[4,4,2,3,3,3,3,5,5],[4,2,2,3,3,3,5,5,5],[4,2,6,3,7,3,5,5,5],[4,6,6,7,7,7,5,5,8],[4,6,7,7,7,7,8,8,8],[8,6,8,7,8,7,7,8,8],[8,8,8,8,8,8,8,8,8]],"solution":[3,5,2,4,0,7,1,6,8],"id":38},{"size":9,"regions":[[0,0,0,2,2,2,2,2,2],[0,0,0,2,2,3,3,3,1],[0,2,2,2,2,2,3,4,4],[0,0,2,2,3,3,3,3,4],[5,0,2,2,3,3,3,4,4],[5,5,5,2,3,3,7,7,4],[6,5,8,2,2,2,2,7,4],[6,5,8,8,2,2,7,7,7],[6,6,6,8,8,8,8,8,8]],"solution":[1,8,3,5,7,2,0,6,4],"id":39},{"size":9,"regions":[[5,5,5,5,0,0,2,1,1],[5,3,3,3,3,0,2,2,1],[5,5,5,3,3,0,2,2,2],[5,3,3,3,3,0,0,2,2],[5,3,4,4,4,4,6,6,6],[5,5,5,5,4,4,6,6,6],[5,5,5,4,4,6,6,6,7],[8,4,4,4,8,6,7,7,7],[8,8,8,8,8,8,7,7,7]],"solution":[4,8,6,1,3,0,5,7,2],"id":40}]</script>
+    <script src="game.js"></script>
   </section>
 
   <section class="content-block">
     <h2>About Meowdoku</h2>
-    <p>Meowdoku is a fast, fun way to pass the time. Whether you have five minutes or an hour, you can pick up right where you left off &mdash; no installs, no accounts, just click and play.</p>
+    <p>Meowdoku is a free browser logic puzzle that puts a cat-themed spin on the popular "Queens" style of grid puzzle. Every board is divided into colored regions, and your job is to place exactly one cat in every row, every column, and every colored region &mdash; with no two cats ever touching, including diagonally. It plays a lot like a cross between Sudoku and a spatial deduction puzzle: there's no luck involved, just careful elimination.</p>
+    <p>Each puzzle on this page is generated and verified ahead of time to have exactly one valid solution, so if you get stuck, the answer is always findable through logic alone &mdash; never guesswork. Boards range from a gentle 5x5 grid up to a tougher 9x9, so you can start easy and work your way up to the expert size. There's nothing to install and nothing to sign up for: pick a size, click a cell, and start solving.</p>
+  </section>
+
+  <section class="content-block">
+    <h2>Why Play Meowdoku</h2>
+    <ul>
+      <li>A real logic puzzle &mdash; every board has exactly one verified solution, no guessing required.</li>
+      <li>Five board sizes from 5x5 to 9x9, so difficulty scales with how much of a challenge you want.</li>
+      <li>A built-in hearts system (3 mistakes allowed) and timer if you want to track your speed.</li>
+      <li>Hint button for when you're stuck, without spoiling the whole board.</li>
+      <li>Instant play in any browser, desktop or mobile &mdash; no install, no account, completely free.</li>
+    </ul>
   </section>
 
   <section class="content-block">
     <h2>How to Play Meowdoku</h2>
     <ol>
-      <li>Click the play area above to start.</li>
-      <li>Use your mouse, keyboard, or touchscreen controls shown in-game.</li>
-      <li>Aim for the highest score and try to beat your previous best.</li>
+      <li>Pick a board size from the dropdown above the puzzle &mdash; 5x5 is the easiest place to start.</li>
+      <li>Click any cell to cycle it: empty &rarr; ✕ (marked as "not here") &rarr; 🐱 (a placed cat) &rarr; empty again.</li>
+      <li>Place exactly one cat in every row, every column, and every colored region.</li>
+      <li>No two cats can touch, even at the corners &mdash; the board will flash red if a placement breaks the rules and cost you a heart.</li>
+      <li>Use ✕ marks to rule out cells as you eliminate possibilities, the same way you'd pencil-mark a Sudoku grid.</li>
+      <li>The puzzle is solved the moment every row, column, and region has exactly one correctly placed cat.</li>
     </ol>
+  </section>
+
+  <section class="content-block">
+    <h2>Tips &amp; Strategies</h2>
+    <ul>
+      <li>Start by scanning for any color region that only fits in one or two cells &mdash; those are your best opening moves.</li>
+      <li>Once you place a cat, immediately mark ✕ on the rest of its row, column, and region &mdash; that's most of your deduction right there.</li>
+      <li>Don't forget the diagonal-touch rule &mdash; it's the one most new players miss, and it eliminates more cells than it looks like.</li>
+      <li>If a region's remaining open cells all share the same row or column, that row/column is solved for that region.</li>
+      <li>Stuck? Use the Hint button to reveal one correct placement rather than guessing and losing a heart.</li>
+    </ul>
   </section>
 
   <section class="content-block faq">
     <h2>Frequently Asked Questions</h2>
     <details>
-      <summary>Is meowdoku free to play?</summary>
-      <p>Yes &mdash; meowdoku is completely free, with no download or signup required.</p>
+      <summary>Is Meowdoku free to play?</summary>
+      <p>Yes, Meowdoku is completely free to play in your browser. There's no download, no signup, and no hidden fees.</p>
     </details>
     <details>
-      <summary>Can I play meowdoku on mobile?</summary>
-      <p>Yes, it works on desktop, tablet, and mobile browsers.</p>
+      <summary>What are the rules of Meowdoku?</summary>
+      <p>Place exactly one cat per row, per column, and per colored region, with no two cats touching &mdash; including diagonally. Every puzzle has exactly one valid solution.</p>
     </details>
     <details>
-      <summary>Do I need to install anything?</summary>
-      <p>No installation needed &mdash; the game runs instantly in your browser.</p>
+      <summary>Is Meowdoku the same as the &quot;Queens&quot; puzzle?</summary>
+      <p>Meowdoku uses the same core rule set as the popular Queens-style grid logic puzzle, with a cat theme and its own puzzle bank.</p>
+    </details>
+    <details>
+      <summary>Can I play Meowdoku on mobile?</summary>
+      <p>Yes &mdash; the board and controls work with touch taps as well as mouse clicks, on phones and tablets.</p>
+    </details>
+    <details>
+      <summary>What happens if I make a mistake?</summary>
+      <p>Placing a cat that conflicts with another cat costs one of your three hearts and the cell is cleared. Lose all three hearts and you'll need to hit Restart.</p>
+    </details>
+    <details>
+      <summary>Does Meowdoku save my progress?</summary>
+      <p>Each puzzle tracks your hearts and timer for the current session. Starting a new puzzle or refreshing the page begins a fresh board.</p>
+    </details>
+    <details>
+      <summary>How hard are the puzzles?</summary>
+      <p>Boards range from a beginner-friendly 5x5 up to an expert 9x9. Every single one is checked ahead of time to have exactly one solution, so there's always a logical path through.</p>
     </details>
   </section>
 </main>
