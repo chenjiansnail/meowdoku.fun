@@ -18,6 +18,7 @@
   var byDifficulty = {}; // size -> [puzzles]
   var current = null;     // active puzzle object {size, regions, solution}
   var board = null;       // n x n grid of cell states
+  var locked = null;      // n x n grid of booleans — cells pre-placed at start
   var hearts = MAX_HEARTS;
   var timerHandle = null;
   var seconds = 0;
@@ -82,14 +83,22 @@
     current = puzzle;
     var n = puzzle.size;
     board = [];
+    locked = [];
     for (var r = 0; r < n; r++) {
       board.push(new Array(n).fill(STATE_EMPTY));
+      locked.push(new Array(n).fill(false));
     }
     hearts = MAX_HEARTS;
     solved = false;
     lockedOut = false;
     seconds = 0;
     els.message.textContent = "";
+    // pre-place one random cat from the solution
+    var startRow = Math.floor(Math.random() * n);
+    puzzle._startRow = startRow;
+    var startCol = puzzle.solution[startRow];
+    board[startRow][startCol] = STATE_CAT;
+    locked[startRow][startCol] = true;
     updateHearts();
     startTimer();
     render();
@@ -99,7 +108,16 @@
     if (!current) return;
     var n = current.size;
     board = [];
-    for (var r = 0; r < n; r++) board.push(new Array(n).fill(STATE_EMPTY));
+    locked = [];
+    for (var r = 0; r < n; r++) {
+      board.push(new Array(n).fill(STATE_EMPTY));
+      locked.push(new Array(n).fill(false));
+    }
+    // restore the same opening cat
+    var startRow = current._startRow;
+    var startCol = current.solution[startRow];
+    board[startRow][startCol] = STATE_CAT;
+    locked[startRow][startCol] = true;
     hearts = MAX_HEARTS;
     solved = false;
     lockedOut = false;
@@ -144,7 +162,12 @@
         cell.setAttribute("data-c", c);
         var regionId = current.regions[r][c];
         cell.style.background = REGION_COLORS[regionId % REGION_COLORS.length];
-        cell.addEventListener("click", onCellClick);
+        if (locked[r][c]) {
+          cell.classList.add("locked");
+          cell.disabled = true;
+        } else {
+          cell.addEventListener("click", onCellClick);
+        }
         renderCellContent(cell, board[r][c]);
         els.board.appendChild(cell);
       }
